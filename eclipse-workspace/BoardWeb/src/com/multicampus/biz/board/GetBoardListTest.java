@@ -6,41 +6,31 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.List;
 
 import com.multicampus.biz.common.JDBCUtil;
 
 public class GetBoardListTest {
 
 	public static void main(String[] args) {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-
-		try{
-			conn = JDBCUtil.getConnection();
-			
-			//3. 단계 : Statement 생성
-			String sql = "select * from board order by seq desc";
-			stmt = conn.prepareStatement(sql);
-
-			//4. 단계 : SQL 전송
-			rs = stmt.executeQuery();
-			System.out.println("게시 글 목록");
-			
-			while(rs.next()) {
-				System.out.print(rs.getInt("SEQ") + " : ");
-				System.out.print(rs.getString("TITLE") + " : ");
-				System.out.print(rs.getString("WRITER") + " : ");
-				System.out.print(rs.getString("CONTENT") + " : ");
-				System.out.print(rs.getDate("REGDATE") + " : ");
-				System.out.println(rs.getInt("CNT"));
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-		} finally {
-			//5. 단계 : 연결 끊기
-			JDBCUtil.close(rs, stmt, conn);
+		BoardDAO boardDAO = new BoardDAO();
+		
+		//글 목록 검색 처리
+		BoardVO vo = new BoardVO();
+		List<BoardVO> boardList = boardDAO.getBoardList(vo);
+		
+		// CASE - 1
+		for(BoardVO board : boardList) {
+			System.out.println("---> " + board.toString());
 		}
+		/*
+		// CASE - 2
+		for(BoardVO board : boardList) {
+			System.out.println(board.getSeq() + " : " + board.getTitle());
+		}
+		
+		// CASE - 3
+		System.out.println("검색된 데이터 수 : " + boardList.size() + "건"); */
 	}
 
 }
